@@ -18,3 +18,4 @@ PallDates <- as.Date(as.character(PallClose$Date),format = "%Y-%m-%d")
 PallClose <- xts(PallClose$`USD PM`,PallDates)
 rm(PallDates)
 
+DF <- merge(GoldClose,SilvClose,PlatClose,PallClose)
