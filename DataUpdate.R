@@ -1,3 +1,4 @@
+library(Quandl)
 GoldClose <- Quandl("LBMA/GOLD", api_key="iU2zhPffw6b_yfXcvj6v") #Gold spot closing prices
 GoldDates <- as.Date(as.character(GoldClose$Date),format = "%Y-%m-%d")
 GoldClose <- xts(GoldClose$`USD (AM)`,GoldDates)
@@ -34,7 +35,22 @@ SLVDates <- as.Date(as.character(SLVClose$Date),format = "%Y-%m-%d")
 SLVClose <- xts(SLVClose$Close,SLVDates)
 rm(SLVDates)
 
+#Return Vectors
+Gold1 <- as.numeric(GoldClose[1])
+GoldReturns <- GoldClose/Gold1
+rm(Gold1)
 
+Pall1 <- as.numeric(PallClose[1])
+PallReturns <- PallClose/Pall1
+rm(Pall1)
 
+Plat1 <- as.numeric(PlatClose[1])
+PlatReturns <- PlatClose/Plat1
+rm(Plat1)
 
+Silv1 <- as.numeric(SilvClose[1])
+SilvReturns <- SilvClose/Silv1
+rm(Silv1)
 
+DFReturns <- merge(GoldReturns,SilvReturns,PallReturns,PlatReturns)
+DFReturns <- na.omit(DFReturns)
