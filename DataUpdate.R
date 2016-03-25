@@ -20,6 +20,21 @@ rm(PallDates)
 
 #Creates xts object with Commodity Prices
 DFCom <- merge(GoldClose,SilvClose,PlatClose,PallClose)
-DFCom <- na.omit(DF)
+DFCom <- na.omit(DFCom)
 
 #xts object with ETF prices -ishares ETFs - IAU and SLV
+IAUClose <- Quandl("YAHOO/TSX_IGT_TO", api_key="iU2zhPffw6b_yfXcvj6v") #Gold ETF
+IAUDates <- as.Date(as.character(IAUClose$Date),format = "%Y-%m-%d")
+IAUClose <- xts(IAUClose$Close,IAUDates)
+IAUClose["/2010-06-16"] <- (IAUClose["/2010-06-16"])/10 #ADJUSTING FOR SPLIT
+rm(IAUDates)
+
+SLVClose <- Quandl("GOOG/NYSE_SLV", api_key="iU2zhPffw6b_yfXcvj6v") #Silver ETF
+SLVDates <- as.Date(as.character(SLVClose$Date),format = "%Y-%m-%d")
+SLVClose <- xts(SLVClose$Close,SLVDates)
+rm(SLVDates)
+
+
+
+
+
