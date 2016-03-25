@@ -18,4 +18,8 @@ PallDates <- as.Date(as.character(PallClose$Date),format = "%Y-%m-%d")
 PallClose <- xts(PallClose$`USD PM`,PallDates)
 rm(PallDates)
 
-DF <- merge(GoldClose,SilvClose,PlatClose,PallClose)
+#Creates xts object with Commodity Prices
+DFCom <- merge(GoldClose,SilvClose,PlatClose,PallClose)
+DFCom <- na.omit(DF)
+
+#xts object with ETF prices -ishares ETFs - IAU and SLV
