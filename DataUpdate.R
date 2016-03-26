@@ -9,6 +9,8 @@ SilvDates <- as.Date(as.character(SilvClose$Date),format = "%Y-%m-%d")
 SilvClose <- xts(SilvClose$USD,SilvDates)
 rm(SilvDates)
 
+GSRatio <- GoldClose/SilvClose
+
 PlatClose <- Quandl("LPPM/PLAT", api_key="iU2zhPffw6b_yfXcvj6v") #Platinum spot closing prices
 PlatDates <- as.Date(as.character(PlatClose$Date),format = "%Y-%m-%d")
 PlatClose <- xts(PlatClose$`USD PM`,PlatDates)
@@ -19,8 +21,10 @@ PallDates <- as.Date(as.character(PallClose$Date),format = "%Y-%m-%d")
 PallClose <- xts(PallClose$`USD PM`,PallDates)
 rm(PallDates)
 
+
 #Creates xts object with Commodity Prices
-DFCom <- merge(GoldClose,SilvClose,PlatClose,PallClose)
+DFCom <- merge(GoldClose,SilvClose,PlatClose,PallClose,GSRatio)
+colnames(DFCom) <- c("GoldClose","SilvClose","PlatClose","PallClose","GSRatio")
 DFCom <- na.omit(DFCom)
 
 #xts object with ETF prices -ishares ETFs - IAU and SLV
@@ -34,6 +38,10 @@ SLVClose <- Quandl("GOOG/NYSE_SLV", api_key="iU2zhPffw6b_yfXcvj6v") #Silver ETF
 SLVDates <- as.Date(as.character(SLVClose$Date),format = "%Y-%m-%d")
 SLVClose <- xts(SLVClose$Close,SLVDates)
 rm(SLVDates)
+
+#Backtest Data Frame
+btDF <- merge(IAUClose,SLVClose,GoldClose,SilvClose,PlatClose) #Backtest Data Frame
+btDF <- na.omit(btDF)
 
 #Return Vectors
 Gold1 <- as.numeric(GoldClose[1])
