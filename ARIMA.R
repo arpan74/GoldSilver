@@ -14,3 +14,6 @@ adf.test(diffRatio,alternative="explosive",k=0)
 
 acf(diffRatio)
 
+x <- arima(DFCom$GSRatio,c(1,1,0))
+
+predict(x,n.ahead = 1)
