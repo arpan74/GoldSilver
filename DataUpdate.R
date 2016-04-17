@@ -40,8 +40,9 @@ SLVClose <- xts(SLVClose$Close,SLVDates)
 rm(SLVDates)
 
 #Backtest Data Frame
-btDF <- merge(IAUClose,SLVClose,GoldClose,SilvClose,PlatClose) #Backtest Data Frame
+btDF <- merge(IAUClose,SLVClose,GoldClose,SilvClose,PlatClose,GSRatio) #Backtest Data Frame
 btDF <- na.omit(btDF)
+colnames(btDF) <- c(IAUClose,SLVClose,GoldClose,SilvClose,PlatClose, GSRatio)
 
 #Return Vectors
 Gold1 <- as.numeric(GoldClose[1])
