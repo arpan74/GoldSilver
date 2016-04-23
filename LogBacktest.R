@@ -7,6 +7,9 @@ position <- 0
 inTrade <- FALSE
 gLong <- FALSE
 returns <- c(0)
+preturns <- c() #unrealized and realized returns
+pdates <- c() #dates for each of the returns for preturns vector
+rdates <- c() #vector of dates for returns
 PArima <- function(DFtest){
   x <- arima(DFtest$GSRatio,c(1,1,0))
   return(c(predict(x,n.ahead = 1)$pred,predict(x,n.ahead = 1)$se))
@@ -51,6 +54,7 @@ for(i in btDF$IAUClose){
   #Exit Trade
   if(inTrade == TRUE){
     if( abs(predictedVal - btDF$GSRatio[end+1]) < Esignal*sd(btDF$GSRatio[start:end]) ){ # Exit Signal from Trade
+      
       if(gLong == TRUE){
         return <- log((btDF$IAUCLose[end+1])/pGold) + log(pSilv/(btDF$SLVClose[end+1]))
         returns <- c(returns,return)
@@ -59,6 +63,7 @@ for(i in btDF$IAUClose){
         cat("Trade exited on ")
         print(btDF[end+1,0])
       }
+      
       if(gLong == FALSE){
         return <- log(pGold/(btDF$IAUClose[end+1])) + log((btDF$SLVClose[end+1])/pSilv)
         returns <- c(returns,return)
@@ -67,13 +72,34 @@ for(i in btDF$IAUClose){
         cat("Trade exited on ")
         print(btDF[end+1,0])
       }
+      
       inTrade <- FALSE
       print(as.integer(return))
+      rdates <- c(rdates,index(btDF)[end+1])
       cat("\n")
     }
+    
+    #Calculate unrealized gains/losses
+    if(gLong == TRUE){
+    preturns <- c(preturns, log((btDF$IAUCLose[end+1])/pGold) + log(pSilv/(btDF$SLVClose[end+1])))
+    pdates <- c(pdates, index(btDF)[end+1])
+    }
+    
+    if(gLong == FALSE){
+    preturns <- c(preturns, log(pGold/(btDF$IAUClose[end+1])) + log((btDF$SLVClose[end+1])/pSilv))
+    pdates <- c(pdates, index(btDF)[end+1])
+    }
+    
+  }
+  
+  if(inTrade == FALSE){
+    preturns <- c(preturns,0)
+    pdates <- c(pdates, index(btDF)[end+1])
   }
   
   start <- start + 1
   end <- start + length
   if( end == length(btDF$IAUClose) ){break}
 }
+
+pdates <- as.Date(pdates)
