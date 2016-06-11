@@ -27,7 +27,16 @@ PRegression <- function(DFtest){
 for(i in btDF$IAUClose){
   
 <<<<<<< HEAD
-
+  if(inTrade == TRUE){
+    #Calculate unrealized gains/losses
+    if(gLong == TRUE){
+      preturns <- c(preturns, log((btDF$IAUCLose[end+1])/pGold) + log(pSilv/(btDF$SLVClose[end+1])))
+      pdates <- c(pdates, index(btDF)[end+1])
+      print("inTrade glong")
+      cat("differnce: ",length(preturns)-length(pdates))
+      print(length( (log((btDF$IAUCLose[end+1])/pGold) + log(pSilv/(btDF$SLVClose[end+1])) ) ))
+      print(btDF$IAUCLose[end+1])
+      print(end+1)
 =======
   if(inTrade == TRUE){     # Calculate unrealized gains/losses
 
@@ -50,7 +59,8 @@ for(i in btDF$IAUClose){
       preturns <- c(preturns, log(pGold/(btDF$IAUClose[end+1])) + log((btDF$SLVClose[end+1])/pSilv))
       pdates <- c(pdates, index(btDF)[end+1])
 <<<<<<< HEAD
-
+      print("inTrade gLong is false")
+      cat("differnce: ",length(preturns)-length(pdates) )
 =======
       if(length(pdates)-length(preturns)  > diff){
         cat("\n")
@@ -69,7 +79,8 @@ for(i in btDF$IAUClose){
     preturns <- c(preturns,0)
     pdates <- c(pdates, index(btDF)[end+1])
 <<<<<<< HEAD
-
+    print("inTrade is false")
+    cat("differnce: ",length(preturns)-length(pdates))
 =======
     if(length(pdates)-length(preturns)  > diff){
       cat("\n")
@@ -105,7 +116,10 @@ for(i in btDF$IAUClose){
         inTrade <- TRUE
         gLong <- TRUE
 <<<<<<< HEAD
-
+        #cat("Entering Trade at ")
+        print(btDF[end+1,0])
+        #cat("Long Gold at ", pGold,"\n")
+        #cat("Short Silver at ",pSilv,"\n")
 =======
         cat("Entering Trade at ")
         print(btDF[end+1,0])
@@ -119,6 +133,7 @@ for(i in btDF$IAUClose){
   #Exit Trade
   if(inTrade == TRUE){
 <<<<<<< HEAD
+    if( abs(predictedVal - btDF$GSRatio[end+1]) < Esignal*sd(btDF$GSRatio[start:end]) ){ # Exit Signal from Trade
 =======
     if( ( abs(predictedVal - btDF$GSRatio[end+1]) - se ) < Esignal*sd(btDF$GSRatio[start:end]) ){ # Exit Signal from Trade
 >>>>>>> 32f35e1ff52c7aff1d7602425d426795ed376f37
@@ -154,6 +169,7 @@ for(i in btDF$IAUClose){
 }
 <<<<<<< HEAD
 
+pdates <- as.Date(pdates)
 =======
 sharpe <- (mean(preturns)*252)/(sqrt(252)*sd(preturns))
 

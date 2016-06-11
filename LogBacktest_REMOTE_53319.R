@@ -10,10 +10,7 @@ returns <- c(0)
 preturns <- c() #unrealized and realized returns
 pdates <- c() #dates for each of the returns for preturns vector
 rdates <- c() #vector of dates for returns
-<<<<<<< HEAD
-=======
 diff <- 0
->>>>>>> 32f35e1ff52c7aff1d7602425d426795ed376f37
 PArima <- function(DFtest){
   x <- arima(DFtest$GSRatio,c(1,1,0))
   return(c(predict(x,n.ahead = 1)$pred,predict(x,n.ahead = 1)$se))
@@ -26,9 +23,6 @@ PRegression <- function(DFtest){
 
 for(i in btDF$IAUClose){
   
-<<<<<<< HEAD
-
-=======
   if(inTrade == TRUE){     # Calculate unrealized gains/losses
 
     if(gLong == TRUE){
@@ -43,15 +37,11 @@ for(i in btDF$IAUClose){
         cat("\n")
         diff <- length(pdates)-length(preturns) 
       }
->>>>>>> 32f35e1ff52c7aff1d7602425d426795ed376f37
     }
     
     if(gLong == FALSE){
       preturns <- c(preturns, log(pGold/(btDF$IAUClose[end+1])) + log((btDF$SLVClose[end+1])/pSilv))
       pdates <- c(pdates, index(btDF)[end+1])
-<<<<<<< HEAD
-
-=======
       if(length(pdates)-length(preturns)  > diff){
         cat("\n")
         print(index(btDF)[end+1])
@@ -61,16 +51,12 @@ for(i in btDF$IAUClose){
         cat("\n")
         diff <- length(pdates)-length(preturns) 
       }
->>>>>>> 32f35e1ff52c7aff1d7602425d426795ed376f37
     }
   }
   
   if(inTrade == FALSE){
     preturns <- c(preturns,0)
     pdates <- c(pdates, index(btDF)[end+1])
-<<<<<<< HEAD
-
-=======
     if(length(pdates)-length(preturns)  > diff){
       cat("\n")
       print(index(btDF)[end+1])
@@ -80,7 +66,6 @@ for(i in btDF$IAUClose){
       cat("\n")
       diff <- length(pdates)-length(preturns) 
     }
->>>>>>> 32f35e1ff52c7aff1d7602425d426795ed376f37
   }
   
   prediction <- PArima(btDF[start:end])
@@ -104,24 +89,17 @@ for(i in btDF$IAUClose){
         pSilv <- as.numeric(btDF$SLVClose[end+1]) # price of silv ETF when position was entered
         inTrade <- TRUE
         gLong <- TRUE
-<<<<<<< HEAD
-
-=======
         cat("Entering Trade at ")
         print(btDF[end+1,0])
         cat("Long Gold at ", pGold,"\n")
         cat("Short Silver at ",pSilv,"\n")
->>>>>>> 32f35e1ff52c7aff1d7602425d426795ed376f37
       }
       
     }
   }
   #Exit Trade
   if(inTrade == TRUE){
-<<<<<<< HEAD
-=======
     if( ( abs(predictedVal - btDF$GSRatio[end+1]) - se ) < Esignal*sd(btDF$GSRatio[start:end]) ){ # Exit Signal from Trade
->>>>>>> 32f35e1ff52c7aff1d7602425d426795ed376f37
       
       if(gLong == TRUE){
         return <- log((btDF$IAUCLose[end+1])/pGold) + log(pSilv/(btDF$SLVClose[end+1]))
@@ -152,13 +130,9 @@ for(i in btDF$IAUClose){
   end <- start + length
   if( end == length(btDF$IAUClose) ){break}
 }
-<<<<<<< HEAD
-
-=======
 sharpe <- (mean(preturns)*252)/(sqrt(252)*sd(preturns))
 
 pdates <- as.Date(pdates)
 
 
 
->>>>>>> 32f35e1ff52c7aff1d7602425d426795ed376f37
