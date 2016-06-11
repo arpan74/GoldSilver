@@ -10,9 +10,7 @@ returns <- c(0)
 preturns <- c() #unrealized and realized returns
 pdates <- c() #dates for each of the returns for preturns vector
 rdates <- c() #vector of dates for returns
-
 diff <- 0
-
 PArima <- function(DFtest){
   x <- arima(DFtest$GSRatio,c(1,1,0))
   return(c(predict(x,n.ahead = 1)$pred,predict(x,n.ahead = 1)$se))
@@ -25,8 +23,6 @@ PRegression <- function(DFtest){
 
 for(i in btDF$IAUClose){
   
-
-
   if(inTrade == TRUE){     # Calculate unrealized gains/losses
 
     if(gLong == TRUE){
@@ -46,9 +42,6 @@ for(i in btDF$IAUClose){
     if(gLong == FALSE){
       preturns <- c(preturns, log(pGold/(btDF$IAUClose[end+1])) + log((btDF$SLVClose[end+1])/pSilv))
       pdates <- c(pdates, index(btDF)[end+1])
-
-
-
       if(length(pdates)-length(preturns)  > diff){
         cat("\n")
         print(index(btDF)[end+1])
@@ -64,8 +57,6 @@ for(i in btDF$IAUClose){
   if(inTrade == FALSE){
     preturns <- c(preturns,0)
     pdates <- c(pdates, index(btDF)[end+1])
-
-
     if(length(pdates)-length(preturns)  > diff){
       cat("\n")
       print(index(btDF)[end+1])
@@ -109,7 +100,7 @@ for(i in btDF$IAUClose){
   #Exit Trade
   if(inTrade == TRUE){
     if( ( abs(predictedVal - btDF$GSRatio[end+1]) - se ) < Esignal*sd(btDF$GSRatio[start:end]) ){ # Exit Signal from Trade
-
+      
       if(gLong == TRUE){
         return <- log((btDF$IAUCLose[end+1])/pGold) + log(pSilv/(btDF$SLVClose[end+1]))
         returns <- c(returns,return)
@@ -139,7 +130,9 @@ for(i in btDF$IAUClose){
   end <- start + length
   if( end == length(btDF$IAUClose) ){break}
 }
-
 sharpe <- (mean(preturns)*252)/(sqrt(252)*sd(preturns))
 
 pdates <- as.Date(pdates)
+
+
+
