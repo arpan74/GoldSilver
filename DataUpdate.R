@@ -1,15 +1,15 @@
-library(Quandl)
+library(Quandl) #Loading Quandl API
 GoldClose <- Quandl("LBMA/GOLD", api_key="iU2zhPffw6b_yfXcvj6v") #Gold spot closing prices
-GoldDates <- as.Date(as.character(GoldClose$Date),format = "%Y-%m-%d")
-GoldClose <- xts(GoldClose$`USD (AM)`,GoldDates)
-rm(GoldDates)
+GoldDates <- as.Date(as.character(GoldClose$Date),format = "%Y-%m-%d") #Changing Dates from Strings to Date Objects
+GoldClose <- xts(GoldClose$`USD (PM)`,GoldDates) # Changing GoldClose from DF to xts object with Gold Closing Prices and Gold Dates objects
+rm(GoldDates) # Delting extraneous GoldDates object
 
 SilvClose <- Quandl("LBMA/SILVER", api_key="iU2zhPffw6b_yfXcvj6v") #Silver spot closing prices
 SilvDates <- as.Date(as.character(SilvClose$Date),format = "%Y-%m-%d")
 SilvClose <- xts(SilvClose$USD,SilvDates)
 rm(SilvDates)
 
-GSRatio <- GoldClose/SilvClose
+GSRatio <- GoldClose/SilvClose # xts object with Gold Closing Prices / Silver Closing Prices
 
 PlatClose <- Quandl("LPPM/PLAT", api_key="iU2zhPffw6b_yfXcvj6v") #Platinum spot closing prices
 PlatDates <- as.Date(as.character(PlatClose$Date),format = "%Y-%m-%d")

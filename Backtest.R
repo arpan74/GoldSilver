@@ -17,7 +17,6 @@ PRegression <- function(DFtest){
   return(predict(model, btDF[end+1]))
 }
 
-
 for(i in btDF$IAUClose){
   
   predictedVal <- PArima(btDF[start:end])
@@ -63,7 +62,7 @@ for(i in btDF$IAUClose){
       inTrade <- FALSE
       print("Gold exited at ")
       print(btDF$IAUClose[end+1])
-      print("Silver exted at ")
+      print("Silver exited at ")
       print(btDF$SLVClose[end+1])
       print(as.integer(return))
     }
@@ -76,12 +75,12 @@ for(i in btDF$IAUClose){
     # }
     # if(gLong == FALSE & inTrade == TRUE){
     #   return <- as.numeric(pGold - btDF$IAUClose[end+1])*aGold + as.numeric(btDF$SLVClose[end+1] - pSilv)*aSilv
-    #   portfolio <- c(portfolio, portfolio[length(portfolio)] + return)
+    #   portfolio <- c(portf    olio, portfolio[length(portfolio)] + return)
     #   
     # }
   }
   
   start <- start + 1
   end <- start + length
-  if( end == length(btDF$IAUClose) ){break}
+  if( end > length(btDF$IAUClose) ){break}
 }
