@@ -42,6 +42,7 @@ end <- start + rollDays # end date for values for rolling regression
 actualVal <- c()
 Rpred <- c()
 Rse <- c()
+dates <- c()
 
 for(i in index(btDF)){
   start <- start + 1
@@ -51,7 +52,10 @@ for(i in index(btDF)){
   model <- arima(btDF$GSRatio[start:end], c(1,1,0))
   Rpred <- c(Rpred,predict(model, n.ahead = 1)$pred)
   Rse <- c(Rse, predict(model, n.ahead = 1)$se)
-  actualVal <- c(actualVal, predict(model, btDF[end + 1]))
+  actualVal <- c(actualVal,btDF[end+1]$GSRatio)
+  dates <- c(dates, i)
 }
 
 resids <- Rpred - actualVal
+dates <- as.Date(dates)
+plot(dates, resids, type = "l")
