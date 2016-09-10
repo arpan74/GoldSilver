@@ -1,3 +1,4 @@
+#install.packages("Quandl")
 library(Quandl)
 GoldClose <- Quandl("LBMA/GOLD", api_key="iU2zhPffw6b_yfXcvj6v") #Gold spot closing prices
 GoldDates <- as.Date(as.character(GoldClose$Date),format = "%Y-%m-%d")

@@ -21,9 +21,9 @@ PArima <- function(DF1){
 trade <- function(date){
   pGold = as.numeric(btDF[as.Date(date)]$IAUClose)
   pSilv = as.numeric(btDF[as.Date(date)]$SLVClose)
-  print(pGold)
   if(inTrade){ # Exiting Trade now
-    cat("Trade exited on ", as.Date(date), "\n")
+    dateString <- toString(as.Date(date))
+    cat("Trade exited on ", dateString, "\n")
     tempReturn <- CalcReturns(date)
     returns <<- append(returns, tempReturn)
     cat("Returns are ",  tempReturn, "\n")
@@ -32,7 +32,8 @@ trade <- function(date){
     tradeCount <<- tradeCount + 1
     LastGoldPriceBought <<- pGold
     LastSilvPriceBought <<- pSilv
-    cat("Trade entered on ", as.Date(date), "\n")
+    dateString <- toString(as.Date(date))
+    cat("Trade entered on ", dateString, "\n")
   }
 }
 
@@ -42,7 +43,6 @@ CalcReturns <- function(date){
   }
   pGold = as.numeric(btDF[as.Date(date)]$IAUClose)
   pSilv = as.numeric(btDF[as.Date(date)]$SLVClose)
-  print(pGold)
   if(gLong){
     return(log(pGold/LastGoldPriceBought) + log(LastSilvPriceBought/pSilv))
   }
