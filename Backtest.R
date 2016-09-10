@@ -1,87 +1,70 @@
+rolling_Days = 150
+EnterSig = 0.25
+ExitSig = 0.10
+inTrade = FALSE
+paperProfit <- c(0)
+LastGoldPriceBought = 0 # Last price Gold was traded @ - used to calc returns
+LastSilvPriceBought = 0 # Last price Silv was traded @ - used to calc returns
+tradeCount = 0 # Number of trades being made
+returns <- c(0) # vector of realized log returns
+gLong = FALSE # if(inTrade) --> this will be True when Long Gold and Short Silv, False if vice versa
+predictedRatio = 0
 start <- 1
-length <- 252
-end <- start + length
-signal <- 0.5
-Esignal <- 0.10
-portfolio <- c(10000)
-position <- 0
-inTrade <- FALSE
-gLong <- FALSE
-returns <- c(0)
-PArima <- function(DFtest){
-  x <- arima(DFtest$GSRatio,c(1,1,0))
+end <- start + rolling_Days
+counter <- 0
+
+PArima <- function(DF1){
+  x <- arima(DF1$GSRatio,c(1,1,0))
   return(predict(x,n.ahead = 1)$pred)
 }
-PRegression <- function(DFtest){
-  model <- lm(GSRatio ~ GoldClose + SilvClose + PlatClose, data = DFtest)
-  return(predict(model, btDF[end+1]))
+
+trade <- function(date){
+  pGold = as.numeric(btDF[as.Date(date)]$IAUClose)
+  pSilv = as.numeric(btDF[as.Date(date)]$SLVClose)
+  print(pGold)
+  if(inTrade){ # Exiting Trade now
+    cat("Trade exited on ", as.Date(date), "\n")
+    tempReturn <- CalcReturns(date)
+    returns <<- append(returns, tempReturn)
+    cat("Returns are ",  tempReturn, "\n")
+  }
+  else if (!inTrade){
+    tradeCount <<- tradeCount + 1
+    LastGoldPriceBought <<- pGold
+    LastSilvPriceBought <<- pSilv
+    cat("Trade entered on ", as.Date(date), "\n")
+  }
+}
+
+CalcReturns <- function(date){
+  if(!inTrade){
+    return(0)
+  }
+  pGold = as.numeric(btDF[as.Date(date)]$IAUClose)
+  pSilv = as.numeric(btDF[as.Date(date)]$SLVClose)
+  print(pGold)
+  if(gLong){
+    return(log(pGold/LastGoldPriceBought) + log(LastSilvPriceBought/pSilv))
+  }
+  return(log(LastGoldPriceBought/pGold) + log(pSilv/LastSilvPriceBought)) 
 }
 
 
-for(i in btDF$IAUClose){
-  
-  predictedVal <- PArima(btDF[start:end])
-  if(inTrade == FALSE){
-    if( abs(predictedVal - btDF$GSRatio[end+1]) > signal*sd(btDF$GSRatio[start:end]) ){
-      if(predictedVal > btDF$GSRatio[end+1]){ # SHORT GOLD LONG SILVER
-        position <- portfolio[length(portfolio)]
-        pGold <- as.numeric(btDF$IAUClose[end+1]) # price of gold ETF when position was entered
-        aGold <- floor(portfolio[length(portfolio)]/2)*pGold # amount of gold ETF shares bought 
-        pSilv <- as.numeric(btDF$SLVClose[end+1]) # price of silv ETF when position was entered
-        aSilv <- floor(portfolio[length(portfolio)]/2)*pSilv # amount of silv ETF shares bought
-        inTrade <- TRUE
-        gLong <- FALSE
-        print("SHORT GOLD LONG SILVER")
-      }
-      if(predictedVal < btDF$GSRatio[end+1]){ # LONG GOLD SHORT SILVER
-        position <- portfolio[length(portfolio)]
-        pGold <- as.numeric(btDF$IAUClose[end+1]) # price of gold ETF when position was entered
-        aGold <- floor(portfolio[length(portfolio)]/2)*pGold # amount of gold ETF shares bought 
-        pSilv <- as.numeric(btDF$SLVClose[end+1]) # price of silv ETF when position was entered
-        aSilv <- floor(portfolio[length(portfolio)]/2)*pSilv # amount of silv ETF shares bought
-        inTrade <- TRUE
-        gLong <- TRUE
-        print("LONG GOLD SHORT SILVER")
-      }
-      print("Gold Bought at ")
-      print(pGold)
-      print("Silver bought at ")
-      print(pSilv)
-    }
-  }
-  if(inTrade == TRUE){
-    if( abs(predictedVal - btDF$GSRatio[end+1]) < Esignal*sd(btDF$GSRatio[start:end]) ){ # Exit Signal from Trade
+for (i in index(btDF)){
+  predictedRatio <- PArima(btDF[start:end])
+  if(inTrade){
+    counter <- counter + 1
+    if( abs(predictedRatio - btDF[as.Date(i)]$GSRatio)  < ExitSig*sd(btDF[start:end]$GSRatio)){
+      trade(i)
       inTrade <- FALSE
-      if(gLong == TRUE){
-        return <- log(as.numeric(btDF$IAUCLose[end+1])/pGold) + log(pSilv/as.numeric(btDF$SLVClose[end+1]))
-        returns <- c(returns,return)
-      }
-      if(gLong == FALSE){
-        return <- log(pGold/as.numeric(btDF$IAUClose[end+1])) + log(as.numeric(btDF$SLVClose[end+1])/pSilv)
-        returns <- c(returns,return)
-      }
-      inTrade <- FALSE
-      print("Gold exited at ")
-      print(btDF$IAUClose[end+1])
-      print("Silver exted at ")
-      print(btDF$SLVClose[end+1])
-      print(as.integer(return))
     }
-    # End of code to exit from trade
-    
-    # #Code below is to calculate portfolio value
-    # if(gLong == TRUE & inTrade == TRUE){
-    #   return <- as.numeric(btDF$IAUCLose[end+1] - pGold)*aGold + as.numeric(pSilv - btDF$SLVClose[end+1])*aSilv
-    #   portfolio <- c(portfolio, portfolio[length(portfolio)] + return)
-    # }
-    # if(gLong == FALSE & inTrade == TRUE){
-    #   return <- as.numeric(pGold - btDF$IAUClose[end+1])*aGold + as.numeric(btDF$SLVClose[end+1] - pSilv)*aSilv
-    #   portfolio <- c(portfolio, portfolio[length(portfolio)] + return)
-    #   
-    # }
+    paperProfit <- append(paperProfit, CalcReturns(i))
   }
   
-  start <- start + 1
-  end <- start + length
-  if( end == length(btDF$IAUClose) ){break}
+  if(!inTrade){
+    if( abs(predictedRatio - btDF[as.Date(i)]$GSRatio)  > EnterSig*sd(btDF[start:end]$GSRatio)){
+      trade(i)
+      inTrade <- TRUE
+    }
+  }
 }
