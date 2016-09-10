@@ -1,6 +1,6 @@
-rolling_Days = 150
-EnterSig = 0.25
-ExitSig = 0.10
+rolling_Days = 252
+EnterSig = 0.3
+ExitSig = 0.05
 inTrade = FALSE
 paperProfit <- c(0)
 LastGoldPriceBought = 0 # Last price Gold was traded @ - used to calc returns
@@ -26,7 +26,6 @@ trade <- function(date){
     cat("Trade exited on ", dateString, "\n")
     tempReturn <- CalcReturns(date)
     returns <<- append(returns, tempReturn)
-    cat("Returns are ",  tempReturn, "\n")
   }
   else if (!inTrade){
     tradeCount <<- tradeCount + 1
@@ -54,17 +53,21 @@ for (i in index(btDF)){
   predictedRatio <- PArima(btDF[start:end])
   if(inTrade){
     counter <- counter + 1
-    if( abs(predictedRatio - btDF[as.Date(i)]$GSRatio)  < ExitSig*sd(btDF[start:end]$GSRatio)){
-      trade(i)
+    if( abs(predictedRatio - btDF[end + 1]$GSRatio)  < ExitSig*sd(btDF[start:end]$GSRatio)){
+      trade(index(btDF[end + 1]))
       inTrade <- FALSE
     }
-    paperProfit <- append(paperProfit, CalcReturns(i))
+    paperProfit <- append(paperProfit, CalcReturns(index(btDF[end + 1])))
   }
   
   if(!inTrade){
-    if( abs(predictedRatio - btDF[as.Date(i)]$GSRatio)  > EnterSig*sd(btDF[start:end]$GSRatio)){
-      trade(i)
+    if( abs(predictedRatio - btDF[end + 1]$GSRatio)  > EnterSig*sd(btDF[start:end]$GSRatio)){
+      trade(index(btDF[end + 1]))
       inTrade <- TRUE
     }
   }
+  
+  start <- start + 1
+  end <- start + rolling_Days
+  if(end == length(btDF) - 1){break}
 }
