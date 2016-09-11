@@ -23,8 +23,8 @@ trade <- function(date){
   pSilv = as.numeric(btDF[as.Date(date)]$SLVClose)
   if(inTrade){ # Exiting Trade now
     dateString <- toString(as.Date(date))
-    cat("Trade exited on ", dateString, "\n")
     tempReturn <- CalcReturns(date)
+    cat("Trade exited on ", dateString, "\n\n")
     returns <<- append(returns, tempReturn)
   }
   else if (!inTrade){
@@ -66,8 +66,7 @@ for (i in index(btDF)){
       inTrade <- TRUE
     }
   }
-  
   start <- start + 1
   end <- start + rolling_Days
-  if(end == length(btDF) - 1){break}
+  if(end == length(index(btDF)) - 1){break}
 }
