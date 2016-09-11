@@ -29,7 +29,7 @@ colnames(DFCom) <- c("GoldClose","SilvClose","PlatClose","PallClose","GSRatio")
 DFCom <- na.omit(DFCom)
 
 #xts object with ETF prices -ishares ETFs - IAU and SLV
-IAUClose <- Quandl("YAHOO/TSX_IGT_TO", api_key="iU2zhPffw6b_yfXcvj6v") #Gold ETF
+IAUClose <- Quandl("GOOG/NYSEARCA_IAU", api_key="iU2zhPffw6b_yfXcvj6v") #Gold ETF
 IAUDates <- as.Date(as.character(IAUClose$Date),format = "%Y-%m-%d")
 IAUClose <- xts(IAUClose$Close,IAUDates)
 IAUClose["/2010-06-16"] <- (IAUClose["/2010-06-16"])/10 #ADJUSTING FOR SPLIT
@@ -41,9 +41,9 @@ SLVClose <- xts(SLVClose$Close,SLVDates)
 rm(SLVDates)
 
 #Backtest Data Frame
-btDF <- merge(IAUClose,SLVClose,GoldClose,SilvClose,PlatClose,GSRatio) #Backtest Data Frame
+btDF <- merge(IAUClose,SLVClose,GoldClose,SilvClose,GSRatio) #Backtest Data Frame
 btDF <- na.omit(btDF)
-colnames(btDF) <- c("IAUClose","SLVClose","GoldClose","SilvClose","PlatClose", "GSRatio")
+colnames(btDF) <- c("IAUClose","SLVClose","GoldClose","SilvClose", "GSRatio")
 
 #Return Vectors
 Gold1 <- as.numeric(GoldClose[1])
