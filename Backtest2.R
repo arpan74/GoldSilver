@@ -18,7 +18,6 @@ PArima <- function(DF1){
   return(predict(x,n.ahead = 1)$pred)
 }
 
-
 trade <- function(date){
   pGold = as.numeric(btDF[as.Date(date)]$IAUClose) # Price of Gold using iShares ETF
   pSilv = as.numeric(btDF[as.Date(date)]$SLVClose) # Price of Silv using iShares ETF
@@ -77,12 +76,9 @@ for (i in index(btDF)){
   # part of the btDF to optimize
   start <- start + 1
   end <- start + rolling_Days
-  
   if(end == length(index(btDF)) - 1){break}
   
   predictedRatio <- PArima(btDF[start:end]) # The predictedRatio is the predicted Gold/Silver Ratio for tomorrow.
-  
-  
   
   if(inTrade){ # If in a trade, check if we can exit the trade
     datesinTrade <- c(datesinTrade, index(btDF[end+1])) # Add the current date to a vector containing all the dates
