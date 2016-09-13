@@ -16,6 +16,7 @@ for( rolling_Days in 20:400){
     dates <- c(dates, as.Date( index(btDF[end+1]) ) )
   }
   test <- xts(Rpred, order.by = as.Date(dates))
+  colnames(test) <- c(toString(rolling_Days))
   DFArima <- merge.xts(DFArima, test, fill = NA)
   print(tail(DFArima))
   print(rolling_Days)
