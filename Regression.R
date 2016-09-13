@@ -5,6 +5,8 @@ rollDays <- 252 # number of days to roll
 end <- start + rollDays # end date for values for rolling regression
 actualVal <- c()
 predictedVal <- c()
+dates <- c()
+
 
 for(i in index(btDF)){
   start <- start + 1
@@ -15,9 +17,10 @@ for(i in index(btDF)){
   rsquared <- c(rsquared, summary(model)$adj.r.squared)
   predictedVal <- c(predictedVal, predict(model, btDF[end + 1]))
   actualVal <- c(actualVal, btDF[end+1]$GSRatio)
+  dates <- c(dates, i)
 }
-
+dates <- as.Date(dates)
 resids <- predictedVal - actualVal
-plot(resids, type = "l")
+plot(dates, resids, type = "l")
 
 resids <- as.xts(resids)
