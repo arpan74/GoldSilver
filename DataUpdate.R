@@ -44,6 +44,7 @@ rm(SLVDates)
 btDF <- merge(IAUClose,SLVClose,GoldClose,SilvClose,GSRatio) #Backtest Data Frame
 btDF <- na.omit(btDF)
 colnames(btDF) <- c("IAUClose","SLVClose","GoldClose","SilvClose", "GSRatio")
+btDF <- btDF["/2012"]
 
 #Return Vectors
 Gold1 <- as.numeric(GoldClose[1])
