@@ -12,12 +12,17 @@ predictedRatio = 0
 start <- 0
 end <- start + rolling_Days
 datesinTrade <- c()
+SharpeDF <- data.frame(c(20:400), seq(0.2,2.0,0.05))
 
 PArima <- function(DF1){
   x <- arima(DF1$GSRatio,c(1,1,0))
   return(predict(x,n.ahead = 1)$pred)
 }
 
+PArimaDF <- function(date, rolling_Days){
+  roller <- toString('X' + rolling_Days)
+  return(DFArima[as.Date(date), roller])
+}
 
 trade <- function(date){
   pGold = as.numeric(btDF[as.Date(date)]$IAUClose) # Price of Gold using iShares ETF
@@ -69,49 +74,62 @@ CalcReturns <- function(date){
   return(log(LastGoldPriceBought/pGold) + log(pSilv/LastSilvPriceBought))
 }
 
+enterSigNum <- 1
+rollingDaysNum <- 1
 
-# Loop to go through all the data points in the dataset and test strategy
-for (i in index(btDF)){ 
+for( EnterSig in seq( 0.2, 2.0 , 0.05 ) ){
   
-  # These manage the rolling dates for the ARIMA model --> The ARIMA model uses start and end to select
-  # part of the btDF to optimize
-  start <- start + 1
-  end <- start + rolling_Days
-  
-  if(end == length(index(btDF)) - 1){break}
-  
-  predictedRatio <- PArima(btDF[start:end]) # The predictedRatio is the predicted Gold/Silver Ratio for tomorrow.
-  
-  
-  
-  if(inTrade){ # If in a trade, check if we can exit the trade
-    datesinTrade <- c(datesinTrade, index(btDF[end+1])) # Add the current date to a vector containing all the dates
-    # that the program is in a trade
+  for ( rolling_Days in 20:400 ){
     
-    #If statement below checks if we are within the confines to exit the trade - the confines are set by the
-    #standard deviation of the ratio and an ExitSignal
-    if( abs(as.numeric(predictedRatio) - as.numeric(btDF[end + 1]$GSRatio))  < ExitSig*sd(btDF[start:end]$GSRatio)){
-      trade(index(btDF[end + 1]))
-      cat("Actual Ratio is ", toString(as.numeric(btDF[end + 1]$GSRatio)), "\n")
-      cat("Gold spot is ", toString(btDF[end+1]$GoldClose), "Silv spot is ", toString(btDF[end+1]$SilvClose), "\n\n")
-      paperProfit <- append(paperProfit, CalcReturns(index(btDF[end + 1])))
-      inTrade <- FALSE
+    # Loop to go through all the data points in the dataset and test strategy
+    for (i in index(btDF)){ 
+      
+      # These manage the rolling dates for the ARIMA model --> The ARIMA model uses start and end to select
+      # part of the btDF to optimize
+      start <- start + 1
+      end <- start + rolling_Days
+      
+      if(end == length(index(btDF)) - 1){break}
+      
+      predictedRatio <- PArima(btDF[start:end]) # The predictedRatio is the predicted Gold/Silver Ratio for tomorrow.
+      
+      
+      
+      if(inTrade){ # If in a trade, check if we can exit the trade
+        datesinTrade <- c(datesinTrade, index(btDF[end+1])) # Add the current date to a vector containing all the dates
+        # that the program is in a trade
+        
+        #If statement below checks if we are within the confines to exit the trade - the confines are set by the
+        #standard deviation of the ratio and an ExitSignal
+        if( abs(as.numeric(predictedRatio) - as.numeric(btDF[end + 1]$GSRatio))  < ExitSig*sd(btDF[start:end]$GSRatio)){
+          trade(index(btDF[end + 1]))
+          cat("Actual Ratio is ", toString(as.numeric(btDF[end + 1]$GSRatio)), "\n")
+          cat("Gold spot is ", toString(btDF[end+1]$GoldClose), "Silv spot is ", toString(btDF[end+1]$SilvClose), "\n\n")
+          paperProfit <- append(paperProfit, CalcReturns(index(btDF[end + 1])))
+          inTrade <- FALSE
+        }
+        else {  
+          paperProfit <- append(paperProfit, CalcReturns(index(btDF[end + 1])))
+        }
+      }
+      else if(!inTrade){
+        if( abs(as.numeric(predictedRatio) - as.numeric(btDF[end + 1]$GSRatio))  > EnterSig*sd(btDF[start:end]$GSRatio) ){
+          trade(index(btDF[end + 1]))
+          cat("Actual Ratio is ", toString(as.numeric(btDF[end + 1]$GSRatio)), "\n")
+          cat("Predicted Ratio is ", toString(as.numeric(predictedRatio)), "\n")
+          cat("Gold spot is ", toString(btDF[end+1]$GoldClose), "Silv spot is ", toString(btDF[end+1]$SilvClose), "\n")
+          inTrade <- TRUE
+        }
+        paperProfit <- append(paperProfit, CalcReturns(index(btDF[end + 1])))
+      }
+      
     }
-    else {  
-      paperProfit <- append(paperProfit, CalcReturns(index(btDF[end + 1])))
-    }
+    cat("Currently using ", rolling_Days, " for # of roll days and ", enterSigNum, "for Enter signal\n")
+    sharpe <- ( mean(paperProfit) / sd(paperProfit) ) * sqrt(252)
+    SharpeDF[rollingDaysNum, enterSigNum] <- sharpe
+    
+    rollingDaysNum <- rollingDaysNum + 1
+    
   }
-  else if(!inTrade){
-    if( abs(as.numeric(predictedRatio) - as.numeric(btDF[end + 1]$GSRatio))  > EnterSig*sd(btDF[start:end]$GSRatio) ){
-      trade(index(btDF[end + 1]))
-      cat("Actual Ratio is ", toString(as.numeric(btDF[end + 1]$GSRatio)), "\n")
-      cat("Predicted Ratio is ", toString(as.numeric(predictedRatio)), "\n")
-      cat("Gold spot is ", toString(btDF[end+1]$GoldClose), "Silv spot is ", toString(btDF[end+1]$SilvClose), "\n")
-      inTrade <- TRUE
-    }
-    paperProfit <- append(paperProfit, CalcReturns(index(btDF[end + 1])))
-  }
-
+  enterSigNum <- enterSigNum + 1
 }
-
-sharpe <- ( mean(paperProfit) / sd(paperProfit) ) * sqrt(252)
