@@ -4,9 +4,9 @@
 
 # due to the previous assumption, a stop-loss will have to be built in
 
-rolling_Days = 252
-rolling_DaysSD = 252
-EnterSig = 0.5
+rolling_Days = 40
+rolling_DaysSD = 40
+EnterSig = 1.5
 ExitSig = 0.10
 inTrade = FALSE
 paperProfit <- c()
@@ -87,7 +87,7 @@ for (i in index(btDF)){
       cat("Gold spot is ", toString(btDF[end+1]$GoldClose), "Silv spot is ", toString(btDF[end+1]$SilvClose), "\n\n")
       inTrade <- FALSE
     }
-   # paperProfit <- append(paperProfit, CalcReturns(index(btDF[end + 1])))
+   paperProfit <- append(paperProfit, CalcReturns(index(btDF[end + 1])))
   }
   else if(!inTrade){
     if( abs(as.numeric(predictedRatio) - as.numeric(btDF[end + 1]$GSRatio))  > EnterSig*sd(btDF[start:end]$GSRatio) ){

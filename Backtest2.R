@@ -1,5 +1,5 @@
-rolling_Days = 252
-EnterSig = 0.5
+rolling_Days = 40
+EnterSig = 1.7
 ExitSig = 0.10
 inTrade = FALSE
 paperProfit <- c()
@@ -19,7 +19,7 @@ PArima <- function(DF1){
 }
 
 PArimaDF <- function(date, rolling_Days){
-  roller <- toString('X' + rolling_Days)
+  roller <- toString(rolling_Days)
   return(DFArima[as.Date(date), roller])
 }
 
@@ -83,7 +83,7 @@ for (i in index(btDF)){
   end <- start + rolling_Days
   if(end == length(index(btDF)) - 1){break}
   
-  predictedRatio <- PDFArima(index(btDF)[end + 1], rolling_Days) # The predictedRatio is the predicted Gold/Silver Ratio for tomorrow.
+  predictedRatio <- PArimaDF(index(btDF)[end + 1], rolling_Days) # The predictedRatio is the predicted Gold/Silver Ratio for tomorrow.
   
   if(inTrade){ # If in a trade, check if we can exit the trade
     datesinTrade <- c(datesinTrade, index(btDF[end+1])) # Add the current date to a vector containing all the dates

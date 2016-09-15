@@ -25,3 +25,4 @@ for( rolling_Days in 20:400){
   dates <- c()
 }
 
+colnames(DFArima) <- c(20:400)
