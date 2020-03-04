@@ -1,1 +1,26 @@
-# GoldSilver
+# An investigation into the cointegration of Gold and Silver
+
+
+![Page 1](GoldSilverPairsTrading/GoldSilverPairsTrading-01.jpg)
+![Page 2](GoldSilverPairsTrading/GoldSilverPairsTrading-02.jpg)
+![Page 3](GoldSilverPairsTrading/GoldSilverPairsTrading-03.jpg)
+![Page 4](GoldSilverPairsTrading/GoldSilverPairsTrading-04.jpg)
+![Page 5](GoldSilverPairsTrading/GoldSilverPairsTrading-05.jpg)
+![Page 6](GoldSilverPairsTrading/GoldSilverPairsTrading-06.jpg)
+![Page 7](GoldSilverPairsTrading/GoldSilverPairsTrading-07.jpg)
+![Page 8](GoldSilverPairsTrading/GoldSilverPairsTrading-08.jpg)
+![Page 9](GoldSilverPairsTrading/GoldSilverPairsTrading-09.jpg)
+![Page 10](GoldSilverPairsTrading/GoldSilverPairsTrading-10.jpg)
+![Page 11](GoldSilverPairsTrading/GoldSilverPairsTrading-11.jpg)
+![Page 12](GoldSilverPairsTrading/GoldSilverPairsTrading-12.jpg)
+![Page 13](GoldSilverPairsTrading/GoldSilverPairsTrading-13.jpg)
+![Page 14](GoldSilverPairsTrading/GoldSilverPairsTrading-14.jpg)
+![Page 15](GoldSilverPairsTrading/GoldSilverPairsTrading-15.jpg)
+![Page 16](GoldSilverPairsTrading/GoldSilverPairsTrading-16.jpg)
+![Page 17](GoldSilverPairsTrading/GoldSilverPairsTrading-17.jpg)
+![Page 18](GoldSilverPairsTrading/GoldSilverPairsTrading-18.jpg)
+![Page 19](GoldSilverPairsTrading/GoldSilverPairsTrading-19.jpg)
+![Page 20](GoldSilverPairsTrading/GoldSilverPairsTrading-20.jpg)
+![Page 21](GoldSilverPairsTrading/GoldSilverPairsTrading-21.jpg)
+![Page 22](GoldSilverPairsTrading/GoldSilverPairsTrading-22.jpg)
+![Page 23](GoldSilverPairsTrading/GoldSilverPairsTrading-23.jpg)
